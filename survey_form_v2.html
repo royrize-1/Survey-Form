@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DC Survey Form – NCH Chem-Aqua</title>
+  <style>
+    :root {
+      --primary: #1e3a6e;
+      --secondary: #2563eb;
+      --accent: #0ea5e9;
+      --bg: #eef2f7;
+      --card: #ffffff;
+      --border: #d1d5db;
+      --text: #1f2937;
+      --label: #374151;
+      --muted: #6b7280;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.5; }
+
+    /* ── Header ── */
+    .app-header { background: var(--primary); color: #fff; padding: 22px 30px; text-align: center; }
+    .app-header h1 { font-size: 22px; font-weight: 800; letter-spacing: 2px; }
+    .app-header h2 { font-size: 13px; font-weight: 400; opacity: .8; margin-top: 4px; }
+
+    /* ── Container ── */
+    .container { max-width: 1100px; margin: 0 auto; padding: 24px 16px 48px; }
+
+
+    /* ── Section Card ── */
+    .section { background: var(--card); border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,.10); margin-bottom: 20px; overflow: hidden; }
+    .section-header { background: var(--primary); color: #fff; padding: 11px 20px; font-size: 13px; font-weight: 700; letter-spacing: .4px; }
+    .section-body { padding: 20px; }
+
+    /* ── Grids ── */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+    @media(max-width:768px){ .grid-2,.grid-3{ grid-template-columns: 1fr; } }
+
+    /* ── Fields ── */
+    .field-group { display: flex; flex-direction: column; gap: 4px; }
+    label.field-label { font-size: 11px; font-weight: 700; color: var(--label); text-transform: uppercase; letter-spacing: .5px; }
+    input[type=text], input[type=email], input[type=tel], input[type=number], select, textarea {
+      width: 100%; padding: 8px 11px; border: 1px solid var(--border); border-radius: 4px;
+      font-size: 13px; color: var(--text); background: #fff; transition: border-color .15s;
+    }
+    input:focus, select:focus, textarea:focus { outline: none; border-color: var(--secondary); box-shadow: 0 0 0 2px rgba(37,99,235,.10); }
+    .input-row { display: flex; gap: 6px; align-items: center; }
+    .input-row input { flex: 1; }
+    .unit-select { width: auto !important; min-width: 70px; }
+    .unit-text { font-size: 12px; color: var(--muted); white-space: nowrap; }
+
+    /* ── Sub-header ── */
+    .sub-header { font-size: 12px; font-weight: 700; color: var(--primary); margin: 16px 0 10px; padding-bottom: 5px; border-bottom: 1px solid #e5e7eb; text-transform: uppercase; letter-spacing: .4px; }
+
+    /* ── Checkboxes ── */
+    .check-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 7px; }
+    .check-item { display: flex; align-items: center; gap: 8px; padding: 6px 10px; border: 1px solid var(--border); border-radius: 5px; cursor: pointer; transition: border-color .15s, background .15s; }
+    .check-item:hover { border-color: var(--secondary); background: #f0f6ff; }
+    .check-item input[type=checkbox], .check-item input[type=radio] { width: auto; cursor: pointer; }
+    .check-item span { font-size: 12px; cursor: pointer; }
+    .radio-row { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 6px; }
+    .radio-row .check-item { width: auto; }
+
+    /* ── Cooling Table ── */
+    .tbl-wrap { overflow-x: auto; margin-top: 8px; }
+    table { width: 100%; border-collapse: collapse; font-size: 11.5px; }
+    th { background: var(--primary); color: #fff; padding: 7px 5px; text-align: center; font-size: 11px; font-weight: 600; white-space: nowrap; border: 1px solid #16305a; }
+    td { padding: 3px 3px; border: 1px solid #e5e7eb; vertical-align: middle; }
+    tr:nth-child(even) td { background: #f9fafb; }
+    td input, td select { border: none; background: transparent; padding: 3px 4px; font-size: 12px; width: 100%; min-width: 55px; }
+    td input:focus, td select:focus { background: #eff6ff; outline: none; }
+    td select { cursor: pointer; }
+
+    /* ── Water Analysis Table ── */
+    .wa-table th { text-align: center; }
+    .wa-table td:first-child { font-size: 12px; font-weight: 500; padding: 5px 8px; background: #f3f6fb; white-space: nowrap; color: var(--primary); }
+    .wa-table th input { background: transparent; border: none; color: #fff; text-align: center; font-size: 11px; font-weight: 600; width: 100px; padding: 0; }
+    .wa-table th input::placeholder { color: rgba(255,255,255,.6); }
+    .wa-table td input { text-align: center; }
+
+    /* ── Buttons ── */
+    .btn-add { margin-top: 10px; padding: 6px 14px; background: var(--accent); color: #fff; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600; }
+    .btn-add:hover { background: #0284c7; }
+    .btn-del { background: #fee2e2; color: #dc2626; border: none; border-radius: 3px; cursor: pointer; padding: 2px 7px; font-size: 12px; font-weight: 600; }
+    .btn-del:hover { background: #fecaca; }
+    .btn-submit { padding: 14px 52px; background: var(--primary); color: #fff; border: none; border-radius: 6px; font-size: 16px; font-weight: 700; cursor: pointer; letter-spacing: .5px; transition: background .2s; }
+    .btn-submit:hover { background: #162d5a; }
+    .btn-submit:disabled { background: #9ca3af; cursor: not-allowed; }
+
+    /* ── Submit Area ── */
+    .submit-area { text-align: center; padding: 28px 0 8px; }
+    #message { margin-top: 16px; padding: 12px 20px; border-radius: 6px; font-size: 14px; font-weight: 500; display: none; }
+    #message.success { background: #dcfce7; color: #16a34a; border: 1px solid #bbf7d0; display: block; }
+    #message.error   { background: #fee2e2; color: #dc2626;  border: 1px solid #fecaca; display: block; }
+
+    /* ── Misc ── */
+    .note-text { font-size: 11.5px; color: var(--muted); margin-bottom: 10px; }
+    .mt-8  { margin-top:  8px; }
+    .mt-12 { margin-top: 12px; }
+    .mt-16 { margin-top: 16px; }
+  </style>
+</head>
+<body>
+
+<div class="app-header">
+  <h1>NCH CHEM-AQUA</h1>
+  <h2>Data Center 360 — Survey Form</h2>
+</div>
+
+<div class="container">
+
+
+  <form id="surveyForm" autocomplete="off">
+
+    <!-- ══════════════════════════════════════════
+         CONTACT INFORMATION
+    ══════════════════════════════════════════ -->
+    <div class="section">
+      <div class="section-header">Contact Information</div>
+      <div class="section-body">
+        <div class="grid-2">
+          <div class="field-group">
+            <label class="field-label">Name</label>
+            <input type="text" name="name" placeholder="Full Name">
+          </div>
+          <div class="field-group">
+            <label class="field-label">Site Name</label>
+            <input type="text" name="siteName" placeholder="Data Center Site Name">
+          </div>
+          <div class="field-group">
+            <label class="field-label">Tel. Phone</label>
+            <input type="tel" name="telPhone" placeholder="Phone Number">
+          </div>
+          <div class="field-group">
+            <label class="field-label">Address</label>
+            <input type="text" name="address" placeholder="Full Address">
+          </div>
+          <div class="field-group">
+            <label class="field-label">Email</label>
+            <input type="email" name="email" placeholder="Email Address">
+          </div>
+          <div class="field-group">
+            <label class="field-label">Facility Size</label>
+            <div class="input-row">
+              <input type="number" name="facilitySize" placeholder="Size" min="0">
+              <select name="facilitySizeUnit" class="unit-select">
+                <option>sqft</option>
+                <option>sqm</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="field-group mt-16">
+          <label class="field-label">Site-Specific Notes</label>
+          <textarea name="siteNotes" rows="3" placeholder="Any site-specific notes…"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         1. TYPE OF DATA CENTER
+    ══════════════════════════════════════════ -->
+    <div class="section">
+      <div class="section-header">1. Type of Data Center</div>
+      <div class="section-body">
+        <div class="grid-2">
+          <div>
+            <div class="sub-header">Data Center Type (เลือกได้หลายข้อ)</div>
+            <div class="check-grid">
+              <label class="check-item"><input type="checkbox" name="dcType" value="Enterprise"><span>Enterprise</span></label>
+              <label class="check-item"><input type="checkbox" name="dcType" value="Edge Data Center"><span>Edge Data Center</span></label>
+              <label class="check-item"><input type="checkbox" name="dcType" value="Hyperscale"><span>Hyperscale</span></label>
+              <label class="check-item"><input type="checkbox" name="dcType" value="Managed Service Data Center"><span>Managed Service Data Center</span></label>
+              <label class="check-item"><input type="checkbox" name="dcType" value="Colocation"><span>Colocation</span></label>
+              <label class="check-item"><input type="checkbox" name="dcType" value="Modular/Mobile Data Center"><span>Modular / Mobile Data Center</span></label>
+            </div>
+          </div>
+          <div>
+            <div class="sub-header">Facility Area / Built-up Area</div>
+            <div class="field-group" style="margin-bottom:14px">
+              <label class="field-label">White Space (IT Area)</label>
+              <div class="input-row">
+                <input type="number" name="whiteSpace" placeholder="Value" min="0">
+                <select name="whiteSpaceUnit" class="unit-select">
+                  <option>sqm</option><option>sqft</option>
+                </select>
+              </div>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Gray Space (Non-IT Area)</label>
+              <div class="input-row">
+                <input type="number" name="graySpace" placeholder="Value" min="0">
+                <select name="graySpaceUnit" class="unit-select">
+                  <option>sqm</option><option>sqft</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         2. COOLING FACILITY
+    ══════════════════════════════════════════ -->
+    <div class="section">
+      <div class="section-header">2. Cooling Facility</div>
+      <div class="section-body">
+        <p class="note-text">กรอกข้อมูลระบบ Cooling แต่ละชุด – กดปุ่ม "+ Add Row" เพื่อเพิ่มแถว</p>
+        <div class="tbl-wrap">
+          <table id="coolingTable">
+            <thead>
+              <tr>
+                <th>Data Hall Cooling</th>
+                <th>Rack Cooling</th>
+                <th>Loop Type</th>
+                <th>Cooling Types</th>
+                <th># Units</th>
+                <th>Capacity (kW)</th>
+                <th>Loop Vol. (m³)</th>
+                <th>kW / Rack</th>
+                <th># Racks</th>
+                <th>Redundancy</th>
+                <th>PUE Impact</th>
+                <th>Cooling Medium</th>
+                <th>Control System</th>
+                <th>Notes</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="coolingBody"></tbody>
+          </table>
+        </div>
+        <button type="button" class="btn-add" onclick="addCoolingRow()">+ Add Row</button>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         3. POWER SUPPLY
+    ══════════════════════════════════════════ -->
+    <div class="section">
+      <div class="section-header">3. Power Supply</div>
+      <div class="section-body">
+        <div class="sub-header" style="margin-top:0">Power Supply</div>
+        <div class="grid-2">
+          <div class="field-group">
+            <label class="field-label">Main Power Source</label>
+            <input type="text" name="powerMainSource" placeholder="Utility Provider, Grid, Substation…">
+          </div>
+          <div class="field-group">
+            <label class="field-label">Power System Capacity</label>
+            <div class="input-row">
+              <input type="number" name="powerCapacity" placeholder="Value" min="0">
+              <select name="powerCapacityUnit" class="unit-select">
+                <option>kW</option><option>MW</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="sub-header">Power Usage</div>
+        <div class="grid-3">
+          <div class="field-group">
+            <label class="field-label">Power Usage Effectiveness (PUE)</label>
+            <div class="input-row">
+              <input type="number" step=".01" name="pue" placeholder="e.g. 1.40" min="0">
+              <span class="unit-text">PUE</span>
+            </div>
+          </div>
+          <div class="field-group">
+            <label class="field-label">Infrastructure Efficiency (DCiE)</label>
+            <div class="input-row">
+              <input type="number" step=".1" name="dcie" placeholder="e.g. 71.4" min="0">
+              <span class="unit-text">%</span>
+            </div>
+          </div>
+          <div class="field-group">
+            <label class="field-label">Peak Load</label>
+            <div class="input-row">
+              <input type="number" name="peakLoad" placeholder="Value" min="0">
+              <select name="peakLoadUnit" class="unit-select">
+                <option>kW</option><option>MW</option>
+              </select>
+            </div>
+          </div>
+          <div class="field-group">
+            <label class="field-label">Monthly kWh Usage</label>
+            <div class="input-row">
+              <input type="number" name="monthlyKwh" placeholder="Value" min="0">
+              <select name="monthlyKwhUnit" class="unit-select">
+                <option>kWh</option><option>MWh</option>
+              </select>
+            </div>
+          </div>
+          <div class="field-group">
+            <label class="field-label">Yearly kWh Usage</label>
+            <div class="input-row">
+              <input type="number" name="yearlyKwh" placeholder="Value" min="0">
+              <select name="yearlyKwhUnit" class="unit-select">
+                <option>kWh</option><option>MWh</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         4. WATER USAGE
+    ══════════════════════════════════════════ -->
+    <div class="section">
+      <div class="section-header">4. Water Usage</div>
+      <div class="section-body">
+        <div class="grid-3">
+          <div class="field-group">
+            <label class="field-label">Water Usage Effectiveness (WUE)</label>
+            <div class="input-row">
+              <input type="number" step=".01" name="wue" placeholder="e.g. 1.20" min="0">
+              <span class="unit-text">WUE</span>
+            </div>
+          </div>
+          <div class="field-group">
+            <label class="field-label">Water Source</label>
+            <input type="text" name="waterSourceMain" placeholder="City, Deepwell, River, etc.">
+          </div>
+        </div>
+        <div class="grid-2 mt-16">
+          <div class="field-group">
+            <label class="field-label">Monthly Usage</label>
+            <div class="input-row">
+              <input type="number" name="monthlyWater" placeholder="Value" min="0">
+              <select name="monthlyWaterUnit" class="unit-select">
+                <option>m³</option><option>gallons</option>
+              </select>
+            </div>
+          </div>
+          <div class="field-group">
+            <label class="field-label">Yearly Usage</label>
+            <div class="input-row">
+              <input type="number" name="yearlyWater" placeholder="Value" min="0">
+              <select name="yearlyWaterUnit" class="unit-select">
+                <option>m³</option><option>gallons</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         5. UPTIME TIER CLASSIFICATION
+    ══════════════════════════════════════════ -->
+    <div class="section">
+      <div class="section-header">5. Uptime Tier Classification</div>
+      <div class="section-body">
+        <div class="grid-2">
+          <div>
+            <div class="sub-header" style="margin-top:0">Tier Classification (เลือกได้หลายข้อ)</div>
+            <div class="check-grid" style="grid-template-columns:repeat(2,1fr)">
+              <label class="check-item"><input type="checkbox" name="uptimeTier" value="Tier 1"><span>Tier 1</span></label>
+              <label class="check-item"><input type="checkbox" name="uptimeTier" value="Tier 2"><span>Tier 2</span></label>
+              <label class="check-item"><input type="checkbox" name="uptimeTier" value="Tier 3"><span>Tier 3</span></label>
+              <label class="check-item"><input type="checkbox" name="uptimeTier" value="Tier 4"><span>Tier 4</span></label>
+            </div>
+          </div>
+          <div>
+            <div class="sub-header" style="margin-top:0">Backup Power</div>
+            <div class="grid-2">
+              <div class="field-group">
+                <label class="field-label">UPS Capacity</label>
+                <div class="input-row">
+                  <input type="number" name="upsCapacity" placeholder="Value" min="0">
+                  <select name="upsCapacityUnit" class="unit-select">
+                    <option>kW</option><option>MW</option>
+                  </select>
+                </div>
+              </div>
+              <div class="field-group">
+                <label class="field-label">UPS Runtime</label>
+                <div class="input-row">
+                  <input type="number" name="upsRuntime" placeholder="Value" min="0">
+                  <select name="upsRuntimeUnit" class="unit-select">
+                    <option>Minutes</option><option>Hours</option>
+                  </select>
+                </div>
+              </div>
+              <div class="field-group">
+                <label class="field-label">Generator Fuel Type</label>
+                <input type="text" name="generatorFuelType" placeholder="Diesel, Natural Gas…">
+              </div>
+              <div class="field-group">
+                <label class="field-label">Generator Fuel Capacity</label>
+                <input type="text" name="generatorFuelCapacity" placeholder="e.g. 10,000 liters">
+              </div>
+              <div class="field-group">
+                <label class="field-label">Generator Runtime</label>
+                <div class="input-row">
+                  <input type="number" name="generatorRuntime" placeholder="Value" min="0">
+                  <select name="generatorRuntimeUnit" class="unit-select">
+                    <option>Hours</option><option>Days</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         6. EQUIPMENT / CONTROLLERS
+    ══════════════════════════════════════════ -->
+    <div class="section">
+      <div class="section-header">6. Equipment / Controllers Used</div>
+      <div class="section-body">
+        <div class="sub-header" style="margin-top:0">Equipment Installed (เลือกได้หลายข้อ)</div>
+        <div class="check-grid">
+          <label class="check-item"><input type="checkbox" name="equipment" value="Real time Controllers"><span>Real Time Controllers</span></label>
+          <label class="check-item"><input type="checkbox" name="equipment" value="Conductivity / pH Sensors / Temperature"><span>Conductivity / pH / Temperature Sensors</span></label>
+          <label class="check-item"><input type="checkbox" name="equipment" value="Corrosion Coupon"><span>Corrosion Coupon</span></label>
+          <label class="check-item"><input type="checkbox" name="equipment" value="Dosing Pump"><span>Dosing Pump</span></label>
+          <label class="check-item"><input type="checkbox" name="equipment" value="ORP / Chlorine Sensors"><span>ORP / Chlorine Sensors</span></label>
+          <label class="check-item"><input type="checkbox" name="equipment" value="Inhibitor Sensors"><span>Inhibitor Sensors</span></label>
+          <label class="check-item"><input type="checkbox" name="equipment" value="Biofilm Monitor"><span>Biofilm Monitor</span></label>
+        </div>
+        <div class="field-group mt-12">
+          <label class="field-label">Other Equipment</label>
+          <input type="text" name="equipmentOther" placeholder="ระบุอุปกรณ์อื่น…">
+        </div>
+
+        <div class="sub-header">Close Loops</div>
+        <div class="grid-3">
+          <div class="field-group">
+            <label class="field-label">How Many Loops?</label>
+            <input type="number" name="closeLoopsCount" placeholder="Number of loops" min="0">
+          </div>
+          <div class="field-group">
+            <label class="field-label">Loop Volume</label>
+            <div class="input-row">
+              <input type="number" name="loopVolume" placeholder="Value" min="0">
+              <select name="loopVolumeUnit" class="unit-select">
+                <option>m³</option><option>gallons</option>
+              </select>
+            </div>
+          </div>
+          <div class="field-group">
+            <label class="field-label">Technology / Equipment / Controllers</label>
+            <input type="text" name="loopTechnology" placeholder="Describe technology installed">
+          </div>
+        </div>
+        <div class="grid-2 mt-12">
+          <div class="field-group">
+            <label class="field-label">Metallurgy</label>
+            <input type="text" name="metallurgy" placeholder="e.g. Copper alloys, Stainless Steel">
+          </div>
+          <div class="field-group">
+            <label class="field-label">Current Water Treatment Program</label>
+            <input type="text" name="currentWaterTreatment" placeholder="Describe current treatment">
+          </div>
+        </div>
+        <div class="field-group mt-12">
+          <label class="field-label">Any other system that involves water treatment?</label>
+          <div class="radio-row">
+            <label class="check-item"><input type="radio" name="otherWaterSystem" value="No" checked><span>No</span></label>
+            <label class="check-item"><input type="radio" name="otherWaterSystem" value="Yes"><span>Yes</span></label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         7. CHALLENGES
+    ══════════════════════════════════════════ -->
+    <div class="section">
+      <div class="section-header">7. Challenges</div>
+      <div class="section-body">
+        <div class="check-grid">
+          <label class="check-item"><input type="checkbox" name="challenges" value="Scaling"><span>Scaling</span></label>
+          <label class="check-item"><input type="checkbox" name="challenges" value="Corrosion"><span>Corrosion</span></label>
+          <label class="check-item"><input type="checkbox" name="challenges" value="Microbiological"><span>Microbiological</span></label>
+          <label class="check-item"><input type="checkbox" name="challenges" value="High Blowdown"><span>High Blowdown</span></label>
+          <label class="check-item"><input type="checkbox" name="challenges" value="Poor Heat Transfer"><span>Poor Heat Transfer</span></label>
+          <label class="check-item"><input type="checkbox" name="challenges" value="Fouling"><span>Fouling</span></label>
+        </div>
+        <div class="field-group mt-12">
+          <label class="field-label">Other Challenges</label>
+          <input type="text" name="challengesOther" placeholder="ระบุปัญหาอื่น…">
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         8. SUSTAINABILITY PROJECTS
+    ══════════════════════════════════════════ -->
+    <div class="section">
+      <div class="section-header">8. Sustainability Projects</div>
+      <div class="section-body">
+        <div class="check-grid">
+          <label class="check-item"><input type="checkbox" name="sustainability" value="Water Reuse"><span>Water Reuse</span></label>
+          <label class="check-item"><input type="checkbox" name="sustainability" value="Blowdown Recycling"><span>Blowdown Recycling</span></label>
+          <label class="check-item"><input type="checkbox" name="sustainability" value="Chemical Reduction"><span>Chemical Reduction</span></label>
+          <label class="check-item"><input type="checkbox" name="sustainability" value="LEED Certification"><span>LEED Certification</span></label>
+          <label class="check-item"><input type="checkbox" name="sustainability" value="WUE Monitoring"><span>WUE Monitoring</span></label>
+          <label class="check-item"><input type="checkbox" name="sustainability" value="PUE Monitoring"><span>PUE Monitoring</span></label>
+          <label class="check-item"><input type="checkbox" name="sustainability" value="CUE Monitoring"><span>CUE Monitoring</span></label>
+        </div>
+        <div class="field-group mt-12">
+          <label class="field-label">Other Sustainability Projects</label>
+          <input type="text" name="sustainabilityOther" placeholder="ระบุโครงการอื่น…">
+        </div>
+        <div class="field-group mt-12">
+          <label class="field-label">Additional Notes / Any Other Information</label>
+          <textarea name="additionalNotes" rows="3" placeholder="ข้อมูลเพิ่มเติม…"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         9. WATER SOURCE / QUALITY / PRE-TREATMENT
+    ══════════════════════════════════════════ -->
+    <div class="section">
+      <div class="section-header">9. Water Source / Quality / Pre-Treatment</div>
+      <div class="section-body">
+        <div class="field-group">
+          <label class="field-label">Water Source</label>
+          <input type="text" name="waterSourceDetail" placeholder="Municipal, Well Water, River, Recycled Water, etc.">
+        </div>
+        <div class="sub-header">Pre-Treatment Process (เลือกได้หลายข้อ)</div>
+        <div class="check-grid">
+          <label class="check-item"><input type="checkbox" name="pretreatment" value="Filtration"><span>Filtration</span></label>
+          <label class="check-item"><input type="checkbox" name="pretreatment" value="Softeners"><span>Softeners</span></label>
+          <label class="check-item"><input type="checkbox" name="pretreatment" value="Nano Filtration"><span>Nano Filtration</span></label>
+          <label class="check-item"><input type="checkbox" name="pretreatment" value="Reverse Osmosis"><span>Reverse Osmosis</span></label>
+          <label class="check-item"><input type="checkbox" name="pretreatment" value="Activated Carbon"><span>Activated Carbon</span></label>
+        </div>
+        <div class="grid-2 mt-12">
+          <div class="field-group">
+            <label class="field-label">Other Pre-Treatment</label>
+            <input type="text" name="pretreatmentOther" placeholder="ระบุกระบวนการอื่น…">
+          </div>
+          <div class="field-group">
+            <label class="field-label">Instruments Installed?</label>
+            <div class="radio-row">
+              <label class="check-item"><input type="radio" name="instrumentsInstalled" value="Yes" checked><span>Yes</span></label>
+              <label class="check-item"><input type="radio" name="instrumentsInstalled" value="No"><span>No</span></label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         10. WATER ANALYSIS
+    ══════════════════════════════════════════ -->
+    <div class="section">
+      <div class="section-header">10. Water Analysis – System of Each Step</div>
+      <div class="section-body">
+        <p class="note-text">พิมพ์ชื่อ Sample ในแถวหัวตาราง แล้วกรอกค่าของแต่ละพารามิเตอร์</p>
+        <div class="tbl-wrap">
+          <table class="wa-table" id="waterTable">
+            <thead>
+              <tr>
+                <th style="min-width:185px;text-align:left;padding-left:8px">Parameters / Sample</th>
+                <th><input id="sampleName0" type="text" placeholder="Sample 1" maxlength="30"></th>
+                <th><input id="sampleName1" type="text" placeholder="Sample 2" maxlength="30"></th>
+                <th><input id="sampleName2" type="text" placeholder="Sample 3" maxlength="30"></th>
+                <th><input id="sampleName3" type="text" placeholder="Sample 4" maxlength="30"></th>
+                <th><input id="sampleName4" type="text" placeholder="Sample 5" maxlength="30"></th>
+                <th><input id="sampleName5" type="text" placeholder="Sample 6" maxlength="30"></th>
+              </tr>
+            </thead>
+            <tbody id="waterBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         11. SYSTEM METALLURGY
+    ══════════════════════════════════════════ -->
+    <div class="section">
+      <div class="section-header">11. System Metallurgy</div>
+      <div class="section-body">
+        <div class="check-grid">
+          <label class="check-item"><input type="checkbox" name="systemMetallurgy" value="Carbon Steel"><span>Carbon Steel</span></label>
+          <label class="check-item"><input type="checkbox" name="systemMetallurgy" value="Copper"><span>Copper</span></label>
+          <label class="check-item"><input type="checkbox" name="systemMetallurgy" value="Stainless Steel"><span>Stainless Steel</span></label>
+        </div>
+        <div class="field-group mt-12">
+          <label class="field-label">Other</label>
+          <input type="text" name="systemMetallurgyOther" placeholder="ระบุวัสดุอื่น…">
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         SUBMIT
+    ══════════════════════════════════════════ -->
+    <div class="submit-area">
+      <button type="submit" class="btn-submit" id="submitBtn">Submit Survey</button>
+      <div id="message"></div>
+    </div>
+
+  </form>
+</div><!-- /container -->
+
+<script>
+// ──────────────────────────────────────────────────────────
+//  DROPDOWN OPTIONS (from Excel reference sheets)
+// ──────────────────────────────────────────────────────────
+const OPT = {
+  dataHall:   ['', 'Air-cooled', 'Liquid Cooled'],
+  rackCooling:['', 'CRAC/CRAH', 'Rear Door HXs', 'Direct-to-Chip', 'Central HVAC', 'Immersion Cooling'],
+  loopType:   ['', 'Chilled Water', 'Glycol', 'Condenser Water', 'Water Based CDU Coolant', 'Dielectric Fluid'],
+  coolingType:['', 'Water Cooled Chillers', 'Dry Coolers', 'Adiabatic Coolers', 'Munters Oasis', 'Tower', 'Fluid Coolers'],
+  kwPerRack:  ['', '2-5 kW/rack (Low Density)', '5-9 kW/rack (Mid Density)', '10-50 kW/rack (High Density)', '50-100+ kW/rack (Ultra High Density)'],
+  redundancy: ['', 'N', 'N+1', 'N+2', '2N', '2N+1', 'N=N', '3N/2', 'Distributed Redundancy']
+};
+
+const WATER_PARAMS = [
+  'Conductivity (uS/cm)',        'Total Hardness (ppm)',
+  'Calcium Hardness (ppm)',      'pH',
+  'Total Alkalinity (M) (ppm)', 'P Alkalinity (ppm)',
+  'Chloride (ppm)',              'TDS (ppm)',
+  'Silica (ppm)',                'Total Iron (ppm)',
+  'Iron Dissolved (ppm)',        'Total Phosphate (ppm)',
+  'Inhibitor (ppm)',             'Biocide Level (ppm)',
+  'Turbidity (NTU)',             'Temperature (C)'
+];
+
+// ──────────────────────────────────────────────────────────
+//  BUILD SELECT
+// ──────────────────────────────────────────────────────────
+function mkSel(opts, name) {
+  return '<select name="' + name + '">' +
+    opts.map(o => '<option value="' + o + '">' + (o || '— select —') + '</option>').join('') +
+    '</select>';
+}
+
+// ──────────────────────────────────────────────────────────
+//  COOLING TABLE
+// ──────────────────────────────────────────────────────────
+function addCoolingRow() {
+  const tr = document.createElement('tr');
+  tr.innerHTML =
+    '<td>' + mkSel(OPT.dataHall,    'c_dataHall[]')    + '</td>' +
+    '<td>' + mkSel(OPT.rackCooling, 'c_rackCooling[]') + '</td>' +
+    '<td>' + mkSel(OPT.loopType,    'c_loopType[]')    + '</td>' +
+    '<td>' + mkSel(OPT.coolingType, 'c_coolingType[]') + '</td>' +
+    '<td><input type="number" name="c_numUnits[]"   placeholder="#" style="width:50px" min="0"></td>' +
+    '<td><input type="number" name="c_capacity[]"   placeholder="kW" min="0"></td>' +
+    '<td><input type="number" name="c_loopVol[]"    placeholder="m³" min="0"></td>' +
+    '<td>' + mkSel(OPT.kwPerRack,   'c_kwPerRack[]')   + '</td>' +
+    '<td><input type="number" name="c_numRacks[]"   placeholder="#" style="width:50px" min="0"></td>' +
+    '<td>' + mkSel(OPT.redundancy,  'c_redundancy[]')  + '</td>' +
+    '<td><input type="text"   name="c_pueImpact[]"  placeholder="Low/Med/High" style="width:80px"></td>' +
+    '<td><input type="text"   name="c_medium[]"     placeholder="Water/Air" style="width:70px"></td>' +
+    '<td><input type="text"   name="c_control[]"    placeholder="BMS, etc." style="width:80px"></td>' +
+    '<td><input type="text"   name="c_notes[]"      placeholder="Notes"></td>' +
+    '<td><button type="button" class="btn-del" onclick="this.closest(\'tr\').remove()">✕</button></td>';
+  document.getElementById('coolingBody').appendChild(tr);
+}
+
+// ──────────────────────────────────────────────────────────
+//  WATER ANALYSIS TABLE
+// ──────────────────────────────────────────────────────────
+function buildWaterTable() {
+  const tbody = document.getElementById('waterBody');
+  WATER_PARAMS.forEach((param, i) => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = '<td>' + param + '</td>' +
+      [0,1,2,3,4,5].map(s =>
+        '<td><input type="number" step="any" min="0" name="wa_' + s + '_' + i + '" placeholder="—" style="width:90px;text-align:center"></td>'
+      ).join('');
+    tbody.appendChild(tr);
+  });
+}
+
+// ──────────────────────────────────────────────────────────
+//  INIT
+// ──────────────────────────────────────────────────────────
+addCoolingRow();
+buildWaterTable();
+
+// ──────────────────────────────────────────────────────────
+//  COLLECT FORM DATA
+// ──────────────────────────────────────────────────────────
+function getVal(name) {
+  const el = document.querySelector('[name="' + name + '"]');
+  return el ? el.value.trim() : '';
+}
+function getChecked(name) {
+  return [...document.querySelectorAll('[name="' + name + '"]:checked')].map(el => el.value);
+}
+function getRadio(name) {
+  const el = document.querySelector('[name="' + name + '"]:checked');
+  return el ? el.value : '';
+}
+function getArrayVals(form, name) {
+  return [...form.querySelectorAll('[name="' + name + '"]')].map(el => el.value.trim());
+}
+
+function collectData() {
+  const form = document.getElementById('surveyForm');
+  const data = {
+    timestamp: new Date().toISOString(),
+    name:              getVal('name'),
+    siteName:          getVal('siteName'),
+    telPhone:          getVal('telPhone'),
+    address:           getVal('address'),
+    email:             getVal('email'),
+    facilitySize:      getVal('facilitySize'),
+    facilitySizeUnit:  getVal('facilitySizeUnit'),
+    siteNotes:         getVal('siteNotes'),
+    dcType:            getChecked('dcType'),
+    whiteSpace:        getVal('whiteSpace'),
+    whiteSpaceUnit:    getVal('whiteSpaceUnit'),
+    graySpace:         getVal('graySpace'),
+    graySpaceUnit:     getVal('graySpaceUnit'),
+    powerMainSource:   getVal('powerMainSource'),
+    powerCapacity:     getVal('powerCapacity'),
+    powerCapacityUnit: getVal('powerCapacityUnit'),
+    pue:               getVal('pue'),
+    dcie:              getVal('dcie'),
+    peakLoad:          getVal('peakLoad'),
+    peakLoadUnit:      getVal('peakLoadUnit'),
+    monthlyKwh:        getVal('monthlyKwh'),
+    monthlyKwhUnit:    getVal('monthlyKwhUnit'),
+    yearlyKwh:         getVal('yearlyKwh'),
+    yearlyKwhUnit:     getVal('yearlyKwhUnit'),
+    wue:               getVal('wue'),
+    waterSourceMain:   getVal('waterSourceMain'),
+    monthlyWater:      getVal('monthlyWater'),
+    monthlyWaterUnit:  getVal('monthlyWaterUnit'),
+    yearlyWater:       getVal('yearlyWater'),
+    yearlyWaterUnit:   getVal('yearlyWaterUnit'),
+    uptimeTier:        getChecked('uptimeTier'),
+    upsCapacity:       getVal('upsCapacity'),
+    upsCapacityUnit:   getVal('upsCapacityUnit'),
+    upsRuntime:        getVal('upsRuntime'),
+    upsRuntimeUnit:    getVal('upsRuntimeUnit'),
+    generatorFuelType:     getVal('generatorFuelType'),
+    generatorFuelCapacity: getVal('generatorFuelCapacity'),
+    generatorRuntime:      getVal('generatorRuntime'),
+    generatorRuntimeUnit:  getVal('generatorRuntimeUnit'),
+    equipment:         getChecked('equipment'),
+    equipmentOther:    getVal('equipmentOther'),
+    closeLoopsCount:   getVal('closeLoopsCount'),
+    loopVolume:        getVal('loopVolume'),
+    loopVolumeUnit:    getVal('loopVolumeUnit'),
+    loopTechnology:    getVal('loopTechnology'),
+    metallurgy:        getVal('metallurgy'),
+    currentWaterTreatment: getVal('currentWaterTreatment'),
+    otherWaterSystem:  getRadio('otherWaterSystem'),
+    challenges:        getChecked('challenges'),
+    challengesOther:   getVal('challengesOther'),
+    sustainability:    getChecked('sustainability'),
+    sustainabilityOther: getVal('sustainabilityOther'),
+    additionalNotes:   getVal('additionalNotes'),
+    waterSourceDetail: getVal('waterSourceDetail'),
+    pretreatment:      getChecked('pretreatment'),
+    pretreatmentOther: getVal('pretreatmentOther'),
+    instrumentsInstalled: getRadio('instrumentsInstalled'),
+    systemMetallurgy:  getChecked('systemMetallurgy'),
+    systemMetallurgyOther: getVal('systemMetallurgyOther')
+  };
+
+  // Cooling rows
+  const rows = document.querySelectorAll('#coolingBody tr');
+  data.coolingRows = [...rows].map(row => ({
+    dataHall:    row.querySelector('[name="c_dataHall[]"]')?.value || '',
+    rackCooling: row.querySelector('[name="c_rackCooling[]"]')?.value || '',
+    loopType:    row.querySelector('[name="c_loopType[]"]')?.value || '',
+    coolingType: row.querySelector('[name="c_coolingType[]"]')?.value || '',
+    numUnits:    row.querySelector('[name="c_numUnits[]"]')?.value || '',
+    capacity:    row.querySelector('[name="c_capacity[]"]')?.value || '',
+    loopVol:     row.querySelector('[name="c_loopVol[]"]')?.value || '',
+    kwPerRack:   row.querySelector('[name="c_kwPerRack[]"]')?.value || '',
+    numRacks:    row.querySelector('[name="c_numRacks[]"]')?.value || '',
+    redundancy:  row.querySelector('[name="c_redundancy[]"]')?.value || '',
+    pueImpact:   row.querySelector('[name="c_pueImpact[]"]')?.value || '',
+    medium:      row.querySelector('[name="c_medium[]"]')?.value || '',
+    control:     row.querySelector('[name="c_control[]"]')?.value || '',
+    notes:       row.querySelector('[name="c_notes[]"]')?.value || ''
+  }));
+
+  // Water analysis
+  const sampleNames = [0,1,2,3,4,5].map(i =>
+    (document.getElementById('sampleName' + i)?.value || ('Sample ' + (i + 1)))
+  );
+  const waValues = WATER_PARAMS.map((p, pi) =>
+    [0,1,2,3,4,5].map(s => {
+      const el = document.querySelector('[name="wa_' + s + '_' + pi + '"]');
+      return el ? (el.value || '') : '';
+    })
+  );
+  data.waterAnalysis = { sampleNames, params: WATER_PARAMS, values: waValues };
+
+  return data;
+}
+
+// ──────────────────────────────────────────────────────────
+//  SUBMIT
+// ──────────────────────────────────────────────────────────
+document.getElementById('surveyForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+
+  const scriptUrl = 'https://script.google.com/macros/s/AKfycby2mT_V0zomVz5QFPnsZC4DI0KaqB1dcIB9iEcdMW0opp7LjCH_2tMak3leIB0tekzJ/exec';
+
+  const btn = document.getElementById('submitBtn');
+  const msg = document.getElementById('message');
+  btn.disabled = true;
+  btn.textContent = 'กำลังส่งข้อมูล…';
+  msg.className = '';
+  msg.style.display = 'none';
+
+  try {
+    const payload = collectData();
+
+    // mode:'no-cors' → response is opaque; data still gets saved on Apps Script side
+    await fetch(scriptUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload),
+      mode: 'no-cors'
+    });
+
+    msg.className = 'success';
+    msg.textContent = '✅ ส่งข้อมูลเรียบร้อยแล้ว! ข้อมูลถูกบันทึกใน Google Sheet "DC Survey Form" แล้ว';
+    document.getElementById('surveyForm').reset();
+    document.getElementById('coolingBody').innerHTML = '';
+    addCoolingRow();
+
+  } catch (err) {
+    msg.className = 'error';
+    msg.textContent = '❌ เกิดข้อผิดพลาด: ' + err.message;
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Submit Survey';
+  }
+});
+</script>
+</body>
+</html>
